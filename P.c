@@ -129,7 +129,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             float e = sqrt(E_to_atom_vector.length*E_to_atom_vector.length - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from point v to E
             float f = sqrt(atom->radius*atom->radius - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from v to collision point
 
-            // Vector from point of tangency (between atom and velocity line) to Electron.
+            // Vector from point of tangency 'v' (between atom and velocity line) to Electron. (e -> E on the drawing)
             // If direction same as velocity vector: e+f. If not: e-f.
             struct vector_data compatibility_vector;
             compatibility_vector.x = E.coordinate_x - point_v.coordinate_x;
@@ -154,8 +154,8 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             REVERSE_VECTOR.x = E.x_velocity * multiplier;
             REVERSE_VECTOR.y = E.y_velocity * multiplier;
             // Correct the position
-            E.coordinate_x += REVERSE_VECTOR.x;
-            E.coordinate_y += REVERSE_VECTOR.y;
+            E.coordinate_x -= REVERSE_VECTOR.x;
+            E.coordinate_y -= REVERSE_VECTOR.y;
 
             // Angle of reflection  [this part might be wrong]
             double theta = atan2(E_to_atom_vector.y, E_to_atom_vector.x);
