@@ -8,11 +8,9 @@ struct electron_data
 {
     float coordinate_x;
     float coordinate_y;
-
     float x_velocity;
     float y_velocity;
     float velocity_length; // vector length
-    
     float angle;
 };
 
@@ -41,7 +39,7 @@ void create_atom_net(struct atom_data * atom)
         {
             (atom + 101*row+column) -> coordinate_x = 10*column;
             (atom + 101*row+column) -> coordinate_y = 10*row;
-            (atom + 101*row+column) -> radius = 4;
+            (atom + 101*row+column) -> radius = 4; // You can provide your own
         }
     }
 }
@@ -52,11 +50,9 @@ struct electron_data spawn_electron()
     struct electron_data electron;
     srand(time(NULL));
     
-    // Electron's position
     electron.coordinate_x = 0.0;
     electron.coordinate_y = rand()%21+40;
 
-    // Electron's velocity
     electron.x_velocity = 0;
     electron.y_velocity = rand()%6-10;
 
@@ -73,7 +69,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
     float dx = cos(E.angle);
     float dy = sin(E.angle);
 
-    // Shift position
+    // Shift the position
     E.x_velocity += 0.001 * acceleration;
     E.coordinate_x = E.coordinate_x + dx + E.x_velocity;
     E.coordinate_y = E.coordinate_y + dy;
@@ -89,7 +85,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
         E.coordinate_y = 1;
         E.y_velocity = -E.y_velocity;
     }
-    
+
     E.velocity_length = sqrt(E.x_velocity*E.x_velocity + E.y_velocity*E.y_velocity);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,6 +115,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             struct vector_data atom_to_velocity_vector;
             float slope = (-1.0) / E.y_velocity / E.x_velocity; // Perpendicular slope
             float alfa = atan(slope);
+            // (Tangent) Distance from point to a line formula
             atom_to_velocity_vector.length = fabsf(A*atom->coordinate_x + B*atom->coordinate_y + C) / sqrt(A*A + B*B);
             atom_to_velocity_vector.x = atom_to_velocity_vector.length * cos(alfa);
             atom_to_velocity_vector.y = atom_to_velocity_vector.length * sin(alfa);
@@ -129,7 +126,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             point_v.coordinate_y = atom->coordinate_y + atom_to_velocity_vector.y;
 
             // Distances between many points in intersecting electron & atom (you won't understand without a drawing i made)
-            float e = sqrt(E_to_atom_vector.length*E_to_atom_vector.length - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from v to E
+            float e = sqrt(E_to_atom_vector.length*E_to_atom_vector.length - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from point v to E
             float f = sqrt(atom->radius*atom->radius - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from v to collision point
 
             // Vector from point of tangency (between atom and velocity line) to Electron.
@@ -152,7 +149,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             {
                 REVERSE_VECTOR.length = f - e;
             }
-            // Vector correcting electron's position (It's just velocity vector reversed and scaled)
+            // A vector correcting electron's position (It's just velocity vector reversed & scaled)
             float multiplier = REVERSE_VECTOR.length / E.velocity_length;
             REVERSE_VECTOR.x = E.x_velocity * multiplier;
             REVERSE_VECTOR.y = E.y_velocity * multiplier;
@@ -160,7 +157,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             E.coordinate_x += REVERSE_VECTOR.x;
             E.coordinate_y += REVERSE_VECTOR.y;
 
-            // Angle of reflection  [is this part bad]
+            // Angle of reflection  [this part might be wrong]
             double theta = atan2(E_to_atom_vector.y, E_to_atom_vector.x);
             double phi = 2 * theta - E.angle;
             
