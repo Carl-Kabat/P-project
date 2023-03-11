@@ -11,7 +11,7 @@ struct electron_data
     float x_velocity;
     float y_velocity;
     float velocity_length; // vector length
-    float angle;
+    float angle; // angle of travel
 };
 
 struct atom_data
