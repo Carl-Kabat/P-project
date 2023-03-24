@@ -111,26 +111,28 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             float B = x1 - x2;
             float C = y1*x2 - y2+x1;
 
-            // Distance from the atom to calculated velocity line
+            // Distance from atom to velocity line
             struct vector_data atom_to_velocity_vector;
-            float slope = (-1.0) / E.y_velocity / E.x_velocity; // Perpendicular slope
+            // Perpendicular slope
+            float slope = (-1.0) / E.y_velocity / E.x_velocity;
             float alfa = atan(slope);
-            // (Tangent) Distance from point to a line formula
+            // Formula
             atom_to_velocity_vector.length = fabsf(A*atom->coordinate_x + B*atom->coordinate_y + C) / sqrt(A*A + B*B);
             atom_to_velocity_vector.x = atom_to_velocity_vector.length * cos(alfa);
             atom_to_velocity_vector.y = atom_to_velocity_vector.length * sin(alfa);
 
-            // Closest point on the velocity line to the atom's center
+            // Closest point 'v' on the velocity line to the atom's center
             struct atom_data point_v;
             point_v.coordinate_x = atom->coordinate_x + atom_to_velocity_vector.x;
             point_v.coordinate_y = atom->coordinate_y + atom_to_velocity_vector.y;
 
             // Distances between many points in intersecting electron & atom (you won't understand without a drawing i made)
+            // Pythagoras
             float e = sqrt(E_to_atom_vector.length*E_to_atom_vector.length - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from point v to E
             float f = sqrt(atom->radius*atom->radius - atom_to_velocity_vector.length*atom_to_velocity_vector.length); // from v to collision point
 
             // Vector from point of tangency 'v' (between atom and velocity line) to Electron. (e -> E on the drawing)
-            // If direction same as velocity vector: e+f. If not: e-f.
+            // If direction same as velocity vector: e+f. If not: f.
             struct vector_data compatibility_vector;
             compatibility_vector.x = E.coordinate_x - point_v.coordinate_x;
             compatibility_vector.y = E.coordinate_y - point_v.coordinate_y;
@@ -147,7 +149,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             }
             if (scalar_product < 0)
             {
-                REVERSE_VECTOR.length = f - e;
+                REVERSE_VECTOR.length = f;
             }
             // A vector correcting electron's position (It's just velocity vector reversed & scaled)
             float multiplier = REVERSE_VECTOR.length / E.velocity_length;
