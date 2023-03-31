@@ -149,7 +149,7 @@ struct electron_data one_cycle(struct electron_data E, struct atom_data * atom, 
             }
             if (scalar_product < 0)
             {
-                REVERSE_VECTOR.length = f - e;
+                REVERSE_VECTOR.length = f;
             }
             // A vector correcting electron's position (It's just velocity vector reversed & scaled)
             float multiplier = REVERSE_VECTOR.length / E.velocity_length;
