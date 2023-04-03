@@ -132,6 +132,10 @@ struct electron_data collision_response (struct electron_data E,
             E.x += REVERSE_VECTOR.x;
             E.x += REVERSE_VECTOR.y;
 
+    // Update Electron to atom vector
+        E_to_atom.x = atom[target_atom].x - E.x;
+        E_to_atom.y = atom[target_atom].y - E.y;
+
     // (This part is unverified)
             float theta = atan2(E_to_atom.y, E_to_atom.x);
             float phi = 2 * theta - E.V_angle;
